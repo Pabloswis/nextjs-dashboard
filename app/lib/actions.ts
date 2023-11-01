@@ -13,6 +13,7 @@ const InvoiceSchema = z.object({
 });
 
 const CreateInvoice = InvoiceSchema.omit({ id: true, date: true });
+const UpdateInvoice = InvoiceSchema.omit({ date: true });
 
 export async function createInvoice(formData: FormData) {
   //*Para trabajar con pocos datos especificos
@@ -31,6 +32,26 @@ export async function createInvoice(formData: FormData) {
     VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
   `;
   //despues de cargar la factura es necesario actualizar
+  revalidatePath("/dashboard/invoices");
+  redirect("/dashboard/invoices");
+}
+
+export async function updateInvoice(id: string, formData: FormData) {
+  const { customerId, amount, status } = UpdateInvoice.parse({
+    id,
+    customerId: formData.get("customerId"),
+    amount: formData.get("amount"),
+    status: formData.get("status"),
+  });
+
+  const amountInCents = amount * 100;
+
+  await sql`
+    UPDATE invoices
+    SET customer_id = ${customerId}, amount = ${amountInCents}, status = ${status}
+    WHERE id = ${id}
+  `;
+
   revalidatePath("/dashboard/invoices");
   redirect("/dashboard/invoices");
 }
