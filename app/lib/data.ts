@@ -20,7 +20,7 @@ export async function fetchRevenue() {
     // Don't do this in real life :)
 
     // console.log("Fetching revenue data...");
-    // await new Promise((resolve) => setTimeout(resolve, 3000));
+    await new Promise((resolve) => setTimeout(resolve, 3000));
 
     const data = await sql<Revenue>`SELECT * FROM revenue`;
 
@@ -47,7 +47,7 @@ export async function fetchLatestInvoices() {
       ...invoice,
       amount: formatCurrency(invoice.amount),
     }));
-    console.log(latestInvoices);
+    // console.log(latestInvoices);
     return latestInvoices;
   } catch (error) {
     console.error("Database Error:", error);
